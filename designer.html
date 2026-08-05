@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TAPD — Design Your Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --black: #0a0a0a;
+  --white: #f5f4f0;
+  --gold: #c9a84c;
+  --gold-light: #e8d49a;
+  --dark: #111110;
+  --surface: #161615;
+  --border: rgba(255,255,255,0.07);
+  --silver-card: #2a2a2a;
+  --gold-card: #1a1508;
+}
+html, body { height: 100%; overflow: hidden; }
+body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; font-weight: 300; display: flex; flex-direction: column; }
+
+/* TOP BAR */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 2rem; height: 56px; flex-shrink: 0;
+  background: var(--dark); border-bottom: 1px solid var(--border);
+  position: relative; z-index: 50;
+}
+.topbar-logo { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:.15em; color:var(--white); text-decoration:none; }
+.topbar-back { display:flex; align-items:center; gap:.5rem; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.5); text-decoration:none; transition:color .2s; }
+.topbar-back:hover { color:var(--white); }
+.topbar-back svg { width:14px; height:14px; }
+.topbar-center { position:absolute; left:50%; transform:translateX(-50%); display:flex; gap:0; }
+.tab-btn {
+  padding:.45rem 1.5rem; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+  background:none; border:1px solid var(--border); color:rgba(255,255,255,.4); cursor:pointer;
+  transition:all .2s; position:relative;
+}
+.tab-btn:first-child { border-radius:3px 0 0 3px; }
+.tab-btn:last-child { border-radius:0 3px 3px 0; margin-left:-1px; }
+.tab-btn.active { background:var(--gold); border-color:var(--gold); color:var(--black); font-weight:500; }
+.topbar-actions { display:flex; gap:.8rem; align-items:center; }
+.btn-order {
+  padding:.5rem 1.4rem; font-size:.7rem; letter-spacing:.12em; text-transform:uppercase;
+  background:var(--gold); border:none; color:var(--black); cursor:pointer; border-radius:2px;
+  font-weight:500; transition:background .2s;
+}
+.btn-order:hover { background:var(--gold-light); }
+
+/* MAIN LAYOUT */
+.designer-main { display:flex; flex:1; overflow:hidden; }
+
+/* ===== PRESETS TAB ===== */
+#tab-presets { display:flex; flex:1; overflow:hidden; }
+#tab-draw { display:none; flex:1; overflow:hidden; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px; flex-shrink:0;
+  background: var(--dark); border-right:1px solid var(--border);
+  overflow-y:auto; padding:1.2rem 0;
+}
+.sidebar::-webkit-scrollbar { width:4px; }
+.sidebar::-webkit-scrollbar-track { background:transparent; }
+.sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1); border-radius:2px; }
+.sidebar-section { padding:0 1.2rem; margin-bottom:1.5rem; }
+.sidebar-label { font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:rgba(255,255,255,.3); margin-bottom:.8rem; }
+
+/* Base color selector */
+.color-options { display:grid; grid-template-columns:1fr 1fr 1fr; gap:.5rem; }
+.color-opt {
+  aspect-ratio:1; border-radius:6px; border:2px solid transparent;
+  cursor:pointer; transition:border-color .2s, transform .2s;
+  position:relative; overflow:hidden;
+}
+.color-opt:hover { transform:scale(1.05); }
+.color-opt.active { border-color:var(--gold); }
+.color-opt .col-label {
+  position:absolute; bottom:4px; left:0; right:0; text-align:center;
+  font-size:.5rem; letter-spacing:.08em; text-transform:uppercase;
+}
+.col-black { background:linear-gradient(135deg,#1a1a18,#0d0d0c); }
+.col-black .col-label { color:rgba(255,255,255,.5); }
+.col-silver { background:linear-gradient(135deg,#8a8f96,#4a4f54); }
+.col-silver .col-label { color:rgba(255,255,255,.8); }
+.col-gold-c { background:linear-gradient(135deg,#c9a84c,#8b6914); }
+.col-gold-c .col-label { color:rgba(0,0,0,.7); }
+
+/* Design presets */
+.preset-grid { display:flex; flex-direction:column; gap:.5rem; }
+.preset-item {
+  display:flex; align-items:center; gap:.8rem;
+  padding:.7rem .9rem; border-radius:6px; border:1px solid transparent;
+  cursor:pointer; transition:all .2s; background:rgba(255,255,255,.02);
+}
+.preset-item:hover { background:rgba(255,255,255,.05); }
+.preset-item.active { border-color:rgba(201,168,76,.4); background:rgba(201,168,76,.06); }
+.preset-thumb {
+  width:48px; height:30px; border-radius:4px; flex-shrink:0; overflow:hidden;
+  background:rgba(255,255,255,.04); display:flex; align-items:center; justify-content:center;
+}
+.preset-thumb svg { width:100%; height:100%; }
+.preset-info { flex:1; min-width:0; }
+.preset-name { font-size:.78rem; color:var(--white); margin-bottom:.15rem; }
+.preset-desc { font-size:.62rem; color:rgba(255,255,255,.35); letter-spacing:.04em; }
+.preset-tag { font-size:.55rem; letter-spacing:.12em; text-transform:uppercase; color:var(--gold); margin-top:.2rem; display:block; }
+
+/* Text inputs */
+.input-field {
+  width:100%; background:rgba(255,255,255,.04); border:1px solid var(--border);
+  border-radius:4px; padding:.55rem .8rem; font-size:.78rem; color:var(--white);
+  font-family:'DM Sans',sans-serif; transition:border-color .2s; outline:none;
+}
+.input-field:focus { border-color:rgba(201,168,76,.5); }
+.input-field::placeholder { color:rgba(255,255,255,.2); }
+.input-group { margin-bottom:.8rem; }
+.input-label { font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:.4rem; display:block; }
+
+/* CARD CANVAS AREA */
+.canvas-area {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+  background: radial-gradient(ellipse at 50% 50%, rgba(201,168,76,.05) 0%, transparent 60%);
+}
+.canvas-grid {
+  position:absolute; inset:0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* LIVE CARD PREVIEW */
+.card-preview-wrap {
+  perspective: 1000px;
+  width: 480px; height: 302px;
+  position: relative; z-index: 2;
+  filter: drop-shadow(0 40px 80px rgba(0,0,0,.8));
+}
+.card-preview {
+  width:100%; height:100%;
+  border-radius:18px; overflow:hidden;
+  position:relative;
+  transform-style: preserve-3d;
+  transform: rotateY(-8deg) rotateX(4deg);
+  transition: transform .6s ease;
+}
+.card-preview:hover { transform: rotateY(0deg) rotateX(0deg); }
+.card-canvas-svg { position:absolute; inset:0; width:100%; height:100%; }
+.card-overlay-text {
+  position:absolute; inset:0; pointer-events:none;
+}
+.card-name-display {
+  position:absolute; bottom:52px; left:28px;
+  font-family:'Bebas Neue',sans-serif; font-size:1.6rem; letter-spacing:.14em;
+}
+.card-role-display {
+  position:absolute; bottom:32px; left:28px;
+  font-size:.72rem; letter-spacing:.15em; text-transform:uppercase; opacity:.7;
+}
+.card-tapd-logo {
+  position:absolute; bottom:22px; right:28px;
+  font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:.1em; opacity:.2;
+}
+.card-nfc-icon {
+  position:absolute; top:22px; right:24px;
+  width:30px; height:30px; opacity:.35;
+}
+.card-chip-display {
+  position:absolute; top:22px; left:24px;
+  width:42px; height:32px;
+  border-radius:4px;
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:2px; padding:4px;
+}
+.card-chip-display div { border-radius:1px; background:rgba(0,0,0,.4); }
+.card-bottom-strip {
+  position:absolute; bottom:0; left:0; right:0; height:4px;
+}
+
+/* Right panel — card info */
+.right-panel {
+  width:220px; flex-shrink:0; background:var(--dark); border-left:1px solid var(--border);
+  padding:1.5rem 1.2rem; overflow-y:auto;
+}
+.right-panel h3 { font-family:'Instrument Serif',serif; font-style:italic; font-size:1.1rem; margin-bottom:1.2rem; color:var(--white); }
+.spec-row { display:flex; justify-content:space-between; padding:.5rem 0; border-bottom:1px solid var(--border); }
+.spec-row:last-child { border-bottom:none; }
+.spec-key { font-size:.68rem; color:rgba(255,255,255,.4); letter-spacing:.06em; }
+.spec-val { font-size:.72rem; color:var(--white); text-align:right; }
+.spec-val.gold { color:var(--gold); }
+.preview-hint { font-size:.65rem; color:rgba(255,255,255,.25); line-height:1.6; margin-top:1.5rem; }
+.btn-save-design {
+  width:100%; margin-top:1.5rem; padding:.75rem; font-size:.7rem; letter-spacing:.12em;
+  text-transform:uppercase; background:transparent; border:1px solid rgba(201,168,76,.4);
+  color:var(--gold); cursor:pointer; border-radius:2px; transition:all .2s;
+}
+.btn-save-design:hover { background:rgba(201,168,76,.1); }
+
+/* ===== DRAW TAB ===== */
+.draw-layout { display:flex; flex:1; overflow:hidden; }
+.draw-toolbar {
+  width:64px; background:var(--dark); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center; gap:.5rem; padding:.8rem 0;
+}
+.tool-btn {
+  width:42px; height:42px; border-radius:6px; background:none; border:1px solid transparent;
+  color:rgba(255,255,255,.4); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .2s; position:relative;
+}
+.tool-btn:hover { background:rgba(255,255,255,.05); color:var(--white); }
+.tool-btn.active { background:rgba(201,168,76,.15); border-color:rgba(201,168,76,.4); color:var(--gold); }
+.tool-btn svg { width:18px; height:18px; }
+.tool-divider { width:32px; height:1px; background:var(--border); margin:.3rem 0; }
+.tool-tooltip {
+  position:absolute; left:54px; top:50%; transform:translateY(-50%);
+  background:#222; color:var(--white); font-size:.62rem; padding:.3rem .6rem;
+  border-radius:3px; white-space:nowrap; pointer-events:none; opacity:0;
+  transition:opacity .15s; letter-spacing:.06em; text-transform:uppercase;
+}
+.tool-btn:hover .tool-tooltip { opacity:1; }
+
+.draw-canvas-wrap {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  position:relative; overflow:hidden;
+  background: radial-gradient(ellipse at 50% 50%, rgba(201,168,76,.04) 0%, transparent 60%);
+}
+.draw-grid {
+  position:absolute; inset:0;
+  background-image: radial-gradient(circle,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+.draw-card-frame {
+  position:relative; z-index:2;
+  width:560px; height:352px; border-radius:20px; overflow:hidden;
+  box-shadow: 0 40px 100px rgba(0,0,0,.8);
+}
+#drawCanvas {
+  position:absolute; inset:0; width:100%; height:100%;
+  cursor:crosshair;
+}
+.draw-card-bg { position:absolute; inset:0; pointer-events:none; }
+.draw-overlay-ui {
+  position:absolute; inset:0; pointer-events:none;
+  display:flex; flex-direction:column; justify-content:space-between; padding:16px 20px;
+}
+.draw-corner-text { font-family:'Bebas Neue',sans-serif; font-size:.9rem; letter-spacing:.1em; opacity:.12; }
+
+.draw-right {
+  width:200px; background:var(--dark); border-left:1px solid var(--border);
+  padding:1.2rem; overflow-y:auto;
+}
+.draw-right h3 { font-family:'Instrument Serif',serif; font-style:italic; font-size:1rem; margin-bottom:1rem; }
+.color-swatch-row { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+.swatch {
+  width:24px; height:24px; border-radius:4px; border:2px solid transparent;
+  cursor:pointer; transition:transform .15s, border-color .15s;
+}
+.swatch:hover { transform:scale(1.15); }
+.swatch.active { border-color:var(--gold); }
+.size-slider { width:100%; accent-color:var(--gold); }
+.draw-label { font-size:.62rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.35); margin-bottom:.4rem; display:block; }
+.draw-section { margin-bottom:1.2rem; }
+.btn-clear {
+  width:100%; padding:.55rem; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+  background:rgba(255,60,60,.08); border:1px solid rgba(255,80,80,.2); color:rgba(255,120,120,.7);
+  cursor:pointer; border-radius:3px; transition:all .2s; margin-top:.5rem;
+}
+.btn-clear:hover { background:rgba(255,60,60,.15); color:rgba(255,140,140,.9); }
+.btn-undo {
+  width:100%; padding:.55rem; font-size:.68rem; letter-spacing:.1em; text-transform:uppercase;
+  background:rgba(255,255,255,.04); border:1px solid var(--border); color:rgba(255,255,255,.5);
+  cursor:pointer; border-radius:3px; transition:all .2s;
+}
+.btn-undo:hover { background:rgba(255,255,255,.08); color:var(--white); }
+.opacity-label { display:flex; justify-content:space-between; align-items:center; margin-bottom:.4rem; }
+
+/* Base card color in draw tab */
+.draw-base-colors { display:flex; gap:.4rem; margin-bottom:.8rem; }
+.draw-base-btn {
+  flex:1; padding:.4rem; font-size:.58rem; letter-spacing:.08em; text-transform:uppercase;
+  border-radius:3px; border:1px solid var(--border); background:none; color:rgba(255,255,255,.4);
+  cursor:pointer; transition:all .2s; text-align:center;
+}
+.draw-base-btn.active { border-color:rgba(201,168,76,.5); color:var(--gold); }
+
+/* CANVAS INSTRUCTIONS */
+.canvas-hint {
+  position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%);
+  font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.2);
+  white-space:nowrap;
+}
+
+/* Responsive: allow scroll on small screens */
+@media (max-width:768px) {
+  html, body { overflow:auto; }
+  .designer-main { flex-direction:column; }
+  .sidebar { width:100%; border-right:none; border-bottom:1px solid var(--border); max-height:280px; }
+  .canvas-area { min-height:280px; }
+  .right-panel { width:100%; border-left:none; border-top:1px solid var(--border); }
+  .card-preview-wrap { width:320px; height:200px; }
+  .topbar-center { display:none; }
+  .draw-layout { flex-direction:column; }
+  .draw-toolbar { width:100%; height:52px; flex-direction:row; border-right:none; border-bottom:1px solid var(--border); padding:0 .8rem; overflow-x:auto; }
+  .draw-card-frame { width:340px; height:214px; }
+  .draw-right { width:100%; border-left:none; border-top:1px solid var(--border); }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <a href="index.html" class="topbar-back">
+    <svg viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8L10 13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Back
+  </a>
+  <a href="index.html" class="topbar-logo">TAPD</a>
+  <div class="topbar-center">
+    <button class="tab-btn active" id="btnPresets" onclick="switchTab('presets')">Presets</button>
+    <button class="tab-btn" id="btnDraw" onclick="switchTab('draw')">
+      <svg style="width:12px;height:12px;vertical-align:middle;margin-right:4px;" viewBox="0 0 16 16" fill="none"><path d="M12 2L14 4L6 12L3 13L4 10L12 2Z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      Draw &amp; Edit
+    </button>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn-order" onclick="window.location.href='index.html#tiers'">Order This Card →</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="designer-main">
+
+  <!-- ===== PRESETS TAB ===== -->
+  <div id="tab-presets">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Card Finish</div>
+        <div class="color-options">
+          <div class="color-opt col-black active" onclick="setCardColor('black')" title="Obsidian Black">
+            <div class="col-label">Black</div>
+          </div>
+          <div class="color-opt col-silver" onclick="setCardColor('silver')" title="Brushed Silver">
+            <div class="col-label">Silver</div>
+          </div>
+          <div class="color-opt col-gold-c" onclick="setCardColor('gold')" title="Polished Gold">
+            <div class="col-label" style="color:var(--gold);">Gold</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Engraved Design</div>
+        <div class="preset-grid" id="presetGrid">
+
+          <div class="preset-item active" onclick="selectPreset('minimal')" data-id="minimal">
+            <div class="preset-thumb">
+              <svg viewBox="0 0 48 30" fill="none"><line x1="8" y1="15" x2="40" y2="15" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/><line x1="16" y1="10" x2="32" y2="10" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/><line x1="16" y1="20" x2="32" y2="20" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/></svg>
+            </div>
+            <div class="preset-info">
+              <div class="preset-name">Minimal Lines</div>
+              <div class="preset-desc">Clean geometric rule</div>
+              <span class="preset-tag">Default</span>
+            </div>
+          </div>
+
+          <div class="preset-item" onclick="selectPreset('porsche')" data-id="porsche">
+            <div class="preset-thumb">
+              <svg viewBox="0 0 48 30" fill="none">
+                <!-- Porsche 911 silhouette thumb -->
+                <path d="M6 22 Q8 22 10 20 Q14 16 20 15 Q28 14 34 15 Q38 15.5 40 17 L42 18 L42 22 Z" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="0.4"/>
+                <ellipse cx="13" cy="22" rx="3.5" ry="3.5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                <ellipse cx="35" cy="22" rx="3.5" ry="3.5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+              </svg>
+            </div>
+            <div class="preset-info">
+              <div class="preset-name">Porsche 911</div>
+              <div class="preset-desc">RWB widebody silhouette</div>
+              <span class="preset-tag">Popular</span>
+            </div>
+          </div>
+
+          <div class="preset-item" onclick="selectPreset('compass')" data-id="compass">
+            <div class="preset-thumb">
+              <svg viewBox="0 0 48 30" fill="none">
+                <circle cx="24" cy="15" r="10" stroke="rgba(255,255,255,0.2)" stroke-width="0.5"/>
+                <line x1="24" y1="5" x2="24" y2="25" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                <line x1="14" y1="15" x2="34" y2="15" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                <polygon points="24,7 25.2,13 24,12 22.8,13" fill="rgba(255,255,255,0.4)"/>
+              </svg>
+            </div>
+            <div class="preset-info">
+              <div class="preset-name">Compass Rose</div>
+              <div class="preset-desc">Navigator's compass</div>
+              <span class="preset-tag">Refined</span>
+            </div>
+          </div>
+
+          <div class="preset-item" onclick="selectPreset('mountain')" data-id="mountain">
+            <div class="preset-thumb">
+              <svg viewBox="0 0 48 30" fill="none">
+                <polyline points="4,26 16,10 22,18 28,8 44,26" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="preset-info">
+              <div class="preset-name">Alpine Ridge</div>
+              <div class="preset-desc">Mountain range line art</div>
+              <span class="preset-tag">Adventure</span>
+            </div>
+          </div>
+
+          <div class="preset-item" onclick="selectPreset('circuit')" data-id="circuit">
+            <div class="preset-thumb">
+              <svg viewBox="0 0 48 30" fill="none">
+                <path d="M6 24 L6 18 Q6 14 10 14 L14 14 Q18 14 18 10 L18 6 L30 6 L30 10 Q30 14 34 14 L38 14 Q42 14 42 18 L42 24" stroke="rgba(255,255,255,0.25)" stroke-width="0.5" fill="none"/>
+                <circle cx="6" cy="24" r="1.5" fill="rgba(255,255,255,0.3)"/>
+                <circle cx="42" cy="24" r="1.5" fill="rgba(255,255,255,0.3)"/>
+                <circle cx="18" cy="6" r="1.5" fill="rgba(255,255,255,0.3)"/>
+                <circle cx="30" cy="6" r="1.5" fill="rgba(255,255,255,0.3)"/>
+              </svg>
+            </div>
+            <div class="preset-info">
+              <div class="preset-name">Circuit Board</div>
+              <div class="preset-desc">Tech trace pattern</div>
+              <span class="preset-tag">Modern</span>
+            </div>
+          </div>
+
+          <div class="preset-item" onclick="selectPreset('wave')" data-id="wave">
+            <div class="preset-thumb">
+              <svg viewBox="0 0 48 30" fill="none">
+                <path d="M3 15 Q9 7 15 15 Q21 23 27 15 Q33 7 39 15 Q42 19 45 15" stroke="rgba(255,255,255,0.3)" stroke-width="0.6" fill="none"/>
+                <path d="M3 19 Q9 11 15 19 Q21 27 27 19 Q33 11 39 19 Q42 23 45 19" stroke="rgba(255,255,255,0.15)" stroke-width="0.4" fill="none"/>
+              </svg>
+            </div>
+            <div class="preset-info">
+              <div class="preset-name">Ocean Wave</div>
+              <div class="preset-desc">Flowing sine curves</div>
+              <span class="preset-tag">Fluid</span>
+            </div>
+          </div>
+
+          <div class="preset-item" onclick="selectPreset('dragon')" data-id="dragon">
+            <div class="preset-thumb">
+              <svg viewBox="0 0 48 30" fill="none">
+                <path d="M8 24 Q12 10 20 12 Q24 13 24 8 Q24 4 28 5 Q32 6 30 12 Q28 18 34 16 Q40 14 40 20 Q40 26 34 24" stroke="rgba(255,255,255,0.3)" stroke-width="0.5" fill="none" stroke-linejoin="round"/>
+                <circle cx="26" cy="8" r="1" fill="rgba(255,255,255,0.4)"/>
+              </svg>
+            </div>
+            <div class="preset-info">
+              <div class="preset-name">Dragon</div>
+              <div class="preset-desc">Eastern serpent art</div>
+              <span class="preset-tag">Bold</span>
+            </div>
+          </div>
+
+          <div class="preset-item" onclick="selectPreset('geometric')" data-id="geometric">
+            <div class="preset-thumb">
+              <svg viewBox="0 0 48 30" fill="none">
+                <polygon points="24,4 44,26 4,26" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+                <polygon points="24,10 38,26 10,26" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.15)" stroke-width="0.4"/>
+              </svg>
+            </div>
+            <div class="preset-info">
+              <div class="preset-name">Sacred Geometry</div>
+              <div class="preset-desc">Nested triangle forms</div>
+              <span class="preset-tag">Minimal</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-label">Your Details</div>
+        <div class="input-group">
+          <span class="input-label">Full Name</span>
+          <input class="input-field" id="inputName" placeholder="e.g. James Whitmore" oninput="updateCardText()" maxlength="22">
+        </div>
+        <div class="input-group">
+          <span class="input-label">Title / Role</span>
+          <input class="input-field" id="inputRole" placeholder="e.g. Financial Advisor · CFA" oninput="updateCardText()" maxlength="30">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Card Canvas -->
+    <div class="canvas-area">
+      <div class="canvas-grid"></div>
+      <div class="card-preview-wrap" id="cardPreviewWrap">
+        <div class="card-preview" id="cardPreview">
+          <!-- Card SVG background (design changes here) -->
+          <svg class="card-canvas-svg" id="cardDesignSvg" viewBox="0 0 480 302" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="bgBlack" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a1a18"/><stop offset="100%" stop-color="#0d0d0c"/></linearGradient>
+              <linearGradient id="bgSilver" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#5a5f66"/><stop offset="100%" stop-color="#2a2f34"/></linearGradient>
+              <linearGradient id="bgGold" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2a1f08"/><stop offset="100%" stop-color="#120e04"/></linearGradient>
+              <linearGradient id="stripGold" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c9a84c"/><stop offset="50%" stop-color="rgba(201,168,76,0.2)"/><stop offset="100%" stop-color="#c9a84c"/></linearGradient>
+            </defs>
+            <!-- Background -->
+            <rect id="cardBg" width="480" height="302" rx="0" fill="url(#bgBlack)"/>
+            <!-- Subtle texture -->
+            <rect width="480" height="302" fill="url(#patGrid)" opacity="0.03"/>
+            <!-- Design engraving area -->
+            <g id="designGroup" opacity="0.18" transform="translate(240,151)"></g>
+            <!-- Bottom strip -->
+            <rect id="cardStrip" x="0" y="298" width="480" height="4" fill="url(#stripGold)"/>
+            <!-- Chip placeholder -->
+            <rect x="24" y="22" width="42" height="32" rx="4" fill="#c9a84c" opacity="0.15" id="chipRect"/>
+            <!-- NFC arc -->
+            <g transform="translate(446,26)" opacity="0.25" id="nfcGroup">
+              <path d="M0 18 A18 18 0 0 0 0 -18" stroke="#c9a84c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M0 12 A12 12 0 0 0 0 -12" stroke="#c9a84c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M0 6 A6 6 0 0 0 0 -6" stroke="#c9a84c" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <circle cx="0" cy="0" r="2" fill="#c9a84c"/>
+            </g>
+          </svg>
+          <!-- Text overlay -->
+          <div class="card-overlay-text">
+            <div class="card-chip-display" id="chipDisplay">
+              <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
+            </div>
+            <div class="card-name-display" id="nameDisplay">YOUR NAME</div>
+            <div class="card-role-display" id="roleDisplay">Title · Company</div>
+            <div class="card-tapd-logo">TAPD</div>
+            <div class="card-bottom-strip"></div>
+          </div>
+        </div>
+      </div>
+      <div class="canvas-hint">Hover to flatten · Scroll sidebar to explore presets</div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="right-panel">
+      <h3>Card Specs</h3>
+      <div class="spec-row"><span class="spec-key">Material</span><span class="spec-val" id="specMaterial">Tungsten</span></div>
+      <div class="spec-row"><span class="spec-key">Finish</span><span class="spec-val" id="specFinish">Obsidian Black</span></div>
+      <div class="spec-row"><span class="spec-key">Engraving</span><span class="spec-val" id="specDesign">Minimal Lines</span></div>
+      <div class="spec-row"><span class="spec-key">NFC Chip</span><span class="spec-val gold">Included</span></div>
+      <div class="spec-row"><span class="spec-key">Website</span><span class="spec-val gold">Linked</span></div>
+      <div class="spec-row"><span class="spec-key">Turnaround</span><span class="spec-val">10–14 days</span></div>
+      <div class="spec-row"><span class="spec-key">Price</span><span class="spec-val gold">$29/mo</span></div>
+      <p class="preview-hint">This is a digital mockup. Final engraving depth and texture may vary slightly. We'll send a proof before production.</p>
+      <button class="btn-save-design" onclick="alert('Design saved! We will reach out to confirm before production.')">Save This Design</button>
+    </div>
+
+  </div><!-- end #tab-presets -->
+
+  <!-- ===== DRAW TAB ===== -->
+  <div id="tab-draw">
+    <div class="draw-layout">
+
+      <!-- Toolbar -->
+      <div class="draw-toolbar">
+        <button class="tool-btn active" id="tool-pen" onclick="setTool('pen')">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M15 2L18 5L8 15L4 16L5 12L15 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><path d="M13 4L16 7" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span class="tool-tooltip">Pen</span>
+        </button>
+        <button class="tool-btn" id="tool-brush" onclick="setTool('brush')">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M3 17C3 17 5 13 9 12C13 11 17 3 17 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="3.5" cy="17.5" r="2" stroke="currentColor" stroke-width="1"/></svg>
+          <span class="tool-tooltip">Brush</span>
+        </button>
+        <button class="tool-btn" id="tool-line" onclick="setTool('line')">
+          <svg viewBox="0 0 20 20" fill="none"><line x1="3" y1="17" x2="17" y2="3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span class="tool-tooltip">Line</span>
+        </button>
+        <button class="tool-btn" id="tool-rect" onclick="setTool('rect')">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="10" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span class="tool-tooltip">Rectangle</span>
+        </button>
+        <button class="tool-btn" id="tool-circle" onclick="setTool('circle')">
+          <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/></svg>
+          <span class="tool-tooltip">Circle</span>
+        </button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">
+          <svg viewBox="0 0 20 20" fill="none"><rect x="2" y="8" width="12" height="8" rx="1" transform="rotate(-30 2 8)" stroke="currentColor" stroke-width="1.3"/><line x1="8" y1="17" x2="18" y2="17" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          <span class="tool-tooltip">Eraser</span>
+        </button>
+        <div class="tool-divider"></div>
+        <button class="tool-btn" onclick="undoStroke()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 9H13C15.8 9 18 11.2 18 14C18 16.8 15.8 19 13 19H8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M7 6L4 9L7 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="tool-tooltip">Undo</span>
+        </button>
+      </div>
+
+      <!-- Canvas -->
+      <div class="draw-canvas-wrap">
+        <div class="draw-grid"></div>
+        <div class="draw-card-frame" id="drawCardFrame">
+          <div class="draw-card-bg" id="drawCardBg"></div>
+          <canvas id="drawCanvas"></canvas>
+          <div class="draw-overlay-ui">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+              <div class="draw-corner-text">TAPD</div>
+              <div style="width:22px;height:22px;opacity:.12;">
+                <svg viewBox="0 0 24 24" fill="none"><path d="M20 12C20 7.58 16.42 4 12 4" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M17 12C17 9.24 14.76 7 12 7" stroke="white" stroke-width="1.5" stroke-linecap="round"/><path d="M14 12C14 10.9 13.1 10 12 10" stroke="white" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="12" r="1.5" fill="white"/></svg>
+              </div>
+            </div>
+            <div></div>
+          </div>
+        </div>
+        <div class="canvas-hint" id="drawHint">Draw freely on the card · Your design will be sent to our team for engraving</div>
+      </div>
+
+      <!-- Draw Right panel -->
+      <div class="draw-right">
+        <h3>Drawing Tools</h3>
+
+        <div class="draw-section">
+          <span class="draw-label">Card Base</span>
+          <div class="draw-base-colors">
+            <button class="draw-base-btn active" onclick="setDrawBase('black',this)">Black</button>
+            <button class="draw-base-btn" onclick="setDrawBase('silver',this)">Silver</button>
+            <button class="draw-base-btn" onclick="setDrawBase('gold',this)">Gold</button>
+          </div>
+        </div>
+
+        <div class="draw-section">
+          <span class="draw-label">Stroke Colour</span>
+          <div class="color-swatch-row">
+            <div class="swatch active" style="background:#ffffff;" onclick="setColor('#ffffff',this)" title="White"></div>
+            <div class="swatch" style="background:#c9a84c;" onclick="setColor('#c9a84c',this)" title="Gold"></div>
+            <div class="swatch" style="background:#b8bcc4;" onclick="setColor('#b8bcc4',this)" title="Silver"></div>
+            <div class="swatch" style="background:#e0e0e0;" onclick="setColor('#e0e0e0',this)" title="Light Gray"></div>
+            <div class="swatch" style="background:#888;" onclick="setColor('#888',this)" title="Mid Gray"></div>
+            <div class="swatch" style="background:#444;" onclick="setColor('#444',this)" title="Dark Gray"></div>
+          </div>
+        </div>
+
+        <div class="draw-section">
+          <div class="opacity-label">
+            <span class="draw-label" style="margin-bottom:0;">Stroke Size</span>
+            <span id="sizeVal" style="font-size:.68rem;color:rgba(255,255,255,.4);">3px</span>
+          </div>
+          <input type="range" class="size-slider" id="sizeSlider" min="1" max="20" value="3" oninput="setSize(this.value)">
+        </div>
+
+        <div class="draw-section">
+          <div class="opacity-label">
+            <span class="draw-label" style="margin-bottom:0;">Opacity</span>
+            <span id="opacityVal" style="font-size:.68rem;color:rgba(255,255,255,.4);">100%</span>
+          </div>
+          <input type="range" class="size-slider" id="opacitySlider" min="10" max="100" value="100" oninput="setOpacity(this.value)">
+        </div>
+
+        <button class="btn-undo" onclick="undoStroke()">↩ Undo Last</button>
+        <button class="btn-clear" onclick="clearCanvas()">✕ Clear All</button>
+
+        <div style="margin-top:1.5rem;">
+          <button class="btn-save-design" onclick="exportDrawing()">Export &amp; Order →</button>
+        </div>
+        <p class="preview-hint" style="margin-top:.8rem;">Your drawing represents your engraving concept. Our team will refine and confirm with you before production.</p>
+      </div>
+
+    </div>
+  </div><!-- end #tab-draw -->
+
+</div><!-- end .designer-main -->
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let cardColor = 'black';
+let currentPreset = 'minimal';
+let drawTool = 'pen';
+let drawColor = '#ffffff';
+let drawSize = 3;
+let drawOpacity = 1;
+let strokes = [];
+let currentStroke = null;
+let isDrawing = false;
+let lineStart = null;
+let shapeStart = null;
+
+// ============================================================
+// PRESET DESIGNS (SVG paths, scaled to center of 480x302 card)
+// ============================================================
+const designs = {
+  minimal: `<line x1="-180" y1="0" x2="180" y2="0" stroke="white" stroke-width="1"/>
+    <line x1="-120" y1="-20" x2="120" y2="-20" stroke="white" stroke-width="0.5" opacity="0.5"/>
+    <line x1="-120" y1="20" x2="120" y2="20" stroke="white" stroke-width="0.5" opacity="0.5"/>`,
+
+  porsche: `
+    <!-- Porsche 911 RWB widebody silhouette -->
+    <g transform="translate(-160,-60) scale(1.1)">
+      <!-- Body -->
+      <path d="M20 110 Q30 80 60 60 Q100 35 160 32 Q220 30 255 40 Q280 48 295 65 Q310 78 315 90 L318 110 Z"
+        fill="rgba(255,255,255,0.06)" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>
+      <!-- Roof -->
+      <path d="M100 60 Q130 35 175 30 Q215 28 240 40" stroke="white" stroke-width="1" fill="none"/>
+      <!-- Windshield -->
+      <path d="M100 60 Q115 48 145 42 Q170 37 190 38 L200 60" fill="rgba(255,255,255,0.04)" stroke="white" stroke-width="0.7"/>
+      <!-- Rear window -->
+      <path d="M215 38 Q235 36 250 40 Q265 45 270 55 L260 62" fill="rgba(255,255,255,0.04)" stroke="white" stroke-width="0.7"/>
+      <!-- Rear wing -->
+      <line x1="290" y1="55" x2="320" y2="45" stroke="white" stroke-width="1.2"/>
+      <line x1="300" y1="65" x2="325" y2="62" stroke="white" stroke-width="1"/>
+      <line x1="320" y1="45" x2="325" y2="62" stroke="white" stroke-width="1"/>
+      <!-- Front bumper detail -->
+      <path d="M20 110 Q15 108 18 100 L25 95 Q28 90 40 88" stroke="white" stroke-width="0.8" fill="none"/>
+      <!-- Headlights -->
+      <circle cx="35" cy="88" r="8" stroke="white" stroke-width="0.8" fill="rgba(255,255,255,0.03)"/>
+      <circle cx="52" cy="85" r="6" stroke="white" stroke-width="0.7" fill="rgba(255,255,255,0.02)"/>
+      <!-- Front wheel arch -->
+      <path d="M60 110 Q70 75 95 70 Q120 68 130 75 Q140 82 140 110" stroke="white" stroke-width="1" fill="rgba(255,255,255,0.03)"/>
+      <!-- Front wheel -->
+      <circle cx="95" cy="112" r="22" stroke="white" stroke-width="1.2" fill="rgba(255,255,255,0.04)"/>
+      <circle cx="95" cy="112" r="14" stroke="white" stroke-width="0.6" fill="none"/>
+      <circle cx="95" cy="112" r="5" fill="rgba(255,255,255,0.15)"/>
+      <!-- Spokes front -->
+      <line x1="95" y1="90" x2="95" y2="134" stroke="white" stroke-width="0.5"/>
+      <line x1="73" y1="112" x2="117" y2="112" stroke="white" stroke-width="0.5"/>
+      <line x1="79" y1="96" x2="111" y2="128" stroke="white" stroke-width="0.5"/>
+      <line x1="111" y1="96" x2="79" y2="128" stroke="white" stroke-width="0.5"/>
+      <!-- Rear wheel arch -->
+      <path d="M220 110 Q228 72 256 68 Q284 66 296 76 Q308 85 310 110" stroke="white" stroke-width="1" fill="rgba(255,255,255,0.03)"/>
+      <!-- Rear wheel -->
+      <circle cx="260" cy="112" r="24" stroke="white" stroke-width="1.2" fill="rgba(255,255,255,0.04)"/>
+      <circle cx="260" cy="112" r="15" stroke="white" stroke-width="0.6" fill="none"/>
+      <circle cx="260" cy="112" r="5" fill="rgba(255,255,255,0.15)"/>
+      <!-- Spokes rear -->
+      <line x1="260" y1="88" x2="260" y2="136" stroke="white" stroke-width="0.5"/>
+      <line x1="236" y1="112" x2="284" y2="112" stroke="white" stroke-width="0.5"/>
+      <line x1="243" y1="95" x2="277" y2="129" stroke="white" stroke-width="0.5"/>
+      <line x1="277" y1="95" x2="243" y2="129" stroke="white" stroke-width="0.5"/>
+      <!-- Side stripe -->
+      <line x1="145" y1="95" x2="215" y2="93" stroke="white" stroke-width="1.5" opacity="0.4"/>
+      <!-- Ground shadow -->
+      <ellipse cx="165" cy="135" rx="155" ry="4" fill="rgba(255,255,255,0.08)"/>
+    </g>`,
+
+  compass: `
+    <circle cx="0" cy="0" r="80" stroke="white" stroke-width="0.8" fill="none"/>
+    <circle cx="0" cy="0" r="60" stroke="white" stroke-width="0.4" fill="none" opacity="0.4"/>
+    <circle cx="0" cy="0" r="4" fill="white" opacity="0.6"/>
+    <!-- North -->
+    <polygon points="0,-80 8,-50 0,-55 -8,-50" fill="white" opacity="0.9"/>
+    <!-- South -->
+    <polygon points="0,80 8,50 0,55 -8,50" fill="white" opacity="0.3"/>
+    <!-- East -->
+    <polygon points="80,0 50,8 55,0 50,-8" fill="white" opacity="0.5"/>
+    <!-- West -->
+    <polygon points="-80,0 -50,8 -55,0 -50,-8" fill="white" opacity="0.5"/>
+    <!-- Tick marks -->
+    <line x1="0" y1="-80" x2="0" y2="-68" stroke="white" stroke-width="1"/>
+    <line x1="0" y1="80" x2="0" y2="68" stroke="white" stroke-width="1"/>
+    <line x1="80" y1="0" x2="68" y2="0" stroke="white" stroke-width="1"/>
+    <line x1="-80" y1="0" x2="-68" y2="0" stroke="white" stroke-width="1"/>
+    <line x1="57" y1="-57" x2="48" y2="-48" stroke="white" stroke-width="0.6" opacity="0.5"/>
+    <line x1="57" y1="57" x2="48" y2="48" stroke="white" stroke-width="0.6" opacity="0.5"/>
+    <line x1="-57" y1="-57" x2="-48" y2="-48" stroke="white" stroke-width="0.6" opacity="0.5"/>
+    <line x1="-57" y1="57" x2="-48" y2="48" stroke="white" stroke-width="0.6" opacity="0.5"/>`,
+
+  mountain: `
+    <polyline points="-210,70 -130,-30 -80,20 -20,-70 50,10 110,-80 180,70"
+      fill="rgba(255,255,255,0.05)" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>
+    <polyline points="-210,70 -130,20 -80,48 -20,0 50,38 110,0 180,70"
+      fill="none" stroke="white" stroke-width="0.5" stroke-linejoin="round" opacity="0.3"/>
+    <line x1="-210" y1="70" x2="210" y2="70" stroke="white" stroke-width="0.5" opacity="0.2"/>`,
+
+  circuit: `
+    <path d="M-180,60 L-180,20 Q-180,-20 -140,-20 L-80,-20 Q-40,-20 -40,-60 L-40,-80 L40,-80 L40,-60 Q40,-20 80,-20 L140,-20 Q180,-20 180,20 L180,60"
+      stroke="white" stroke-width="1" fill="none"/>
+    <path d="M-120,60 L-120,40 Q-120,10 -90,10 L-50,10 Q-20,10 -20,-20"
+      stroke="white" stroke-width="0.6" fill="none" opacity="0.5"/>
+    <path d="M120,60 L120,40 Q120,10 90,10 L50,10 Q20,10 20,-20"
+      stroke="white" stroke-width="0.6" fill="none" opacity="0.5"/>
+    <circle cx="-180" cy="60" r="4" fill="white" opacity="0.6"/>
+    <circle cx="180" cy="60" r="4" fill="white" opacity="0.6"/>
+    <circle cx="-40" cy="-80" r="4" fill="white" opacity="0.6"/>
+    <circle cx="40" cy="-80" r="4" fill="white" opacity="0.6"/>
+    <circle cx="-20" cy="-20" r="3" fill="white" opacity="0.4"/>
+    <circle cx="20" cy="-20" r="3" fill="white" opacity="0.4"/>
+    <circle cx="-90" cy="10" r="3" fill="white" opacity="0.3"/>
+    <circle cx="90" cy="10" r="3" fill="white" opacity="0.3"/>`,
+
+  wave: `
+    <path d="M-220,0 Q-180,-50 -140,0 Q-100,50 -60,0 Q-20,-50 20,0 Q60,50 100,0 Q140,-50 180,0 Q210,40 220,0"
+      stroke="white" stroke-width="1.2" fill="none"/>
+    <path d="M-220,25 Q-180,-25 -140,25 Q-100,75 -60,25 Q-20,-25 20,25 Q60,75 100,25 Q140,-25 180,25 Q210,65 220,25"
+      stroke="white" stroke-width="0.6" fill="none" opacity="0.4"/>
+    <path d="M-220,-25 Q-180,-75 -140,-25 Q-100,25 -60,-25 Q-20,-75 20,-25 Q60,25 100,-25 Q140,-75 180,-25 Q210,15 220,-25"
+      stroke="white" stroke-width="0.4" fill="none" opacity="0.2"/>`,
+
+  dragon: `
+    <path d="M-150,60 Q-120,10 -60,20 Q-20,28 -10,-30 Q0,-70 40,-55 Q70,-40 50,10 Q30,50 80,35 Q130,20 140,50 Q150,80 110,70"
+      stroke="white" stroke-width="1.2" fill="none" stroke-linejoin="round"/>
+    <path d="M-150,60 Q-140,80 -120,70 Q-100,60 -110,40" stroke="white" stroke-width="0.8" fill="none"/>
+    <!-- Scales suggestion -->
+    <path d="M-60,20 Q-55,10 -45,15 Q-50,25 -60,20" stroke="white" stroke-width="0.6" fill="none" opacity="0.5"/>
+    <path d="M-10,-30 Q-5,-40 5,-35 Q0,-25 -10,-30" stroke="white" stroke-width="0.6" fill="none" opacity="0.5"/>
+    <path d="M50,10 Q55,0 65,5 Q60,15 50,10" stroke="white" stroke-width="0.6" fill="none" opacity="0.5"/>
+    <!-- Eye -->
+    <circle cx="38" cy="-57" r="4" stroke="white" stroke-width="0.8" fill="rgba(255,255,255,0.1)"/>
+    <circle cx="38" cy="-57" r="1.5" fill="white" opacity="0.7"/>
+    <!-- Claws -->
+    <path d="M110,70 L105,85 M110,70 L115,86 M110,70 L120,80" stroke="white" stroke-width="0.7" stroke-linecap="round"/>`,
+
+  geometric: `
+    <polygon points="0,-90 104,45 -104,45" fill="rgba(255,255,255,0.04)" stroke="white" stroke-width="1.2"/>
+    <polygon points="0,-60 70,30 -70,30" fill="rgba(255,255,255,0.03)" stroke="white" stroke-width="0.7" opacity="0.7"/>
+    <polygon points="0,-30 35,15 -35,15" fill="rgba(255,255,255,0.02)" stroke="white" stroke-width="0.5" opacity="0.5"/>
+    <line x1="0" y1="-90" x2="0" y2="45" stroke="white" stroke-width="0.4" opacity="0.2"/>
+    <line x1="-104" y1="45" x2="104" y2="45" stroke="white" stroke-width="0.4" opacity="0.2"/>
+    <line x1="-104" y1="45" x2="0" y2="-90" stroke="white" stroke-width="0.4" opacity="0.1"/>
+    <line x1="104" y1="45" x2="0" y2="-90" stroke="white" stroke-width="0.4" opacity="0.1"/>`
+};
+
+const colorConfigs = {
+  black:  { bg:'url(#bgBlack)', chip:'rgba(201,168,76,0.9)', nameCol:'#f5f4f0', roleCol:'rgba(201,168,76,0.8)', strip:'url(#stripGold)', finishName:'Obsidian Black', material:'Tungsten' },
+  silver: { bg:'url(#bgSilver)', chip:'rgba(220,225,230,0.9)', nameCol:'#f5f4f0', roleCol:'rgba(220,225,230,0.8)', strip:'linear-gradient(90deg,#b8bcc4,rgba(184,188,196,0.3),#b8bcc4)', finishName:'Brushed Silver', material:'Stainless Steel' },
+  gold:   { bg:'url(#bgGold)', chip:'rgba(201,168,76,0.9)', nameCol:'#c9a84c', roleCol:'rgba(201,168,76,0.6)', strip:'url(#stripGold)', finishName:'Polished Gold', material:'Brass' }
+};
+
+function setCardColor(c) {
+  cardColor = c;
+  document.querySelectorAll('.color-opt').forEach(el => el.classList.remove('active'));
+  document.querySelector(`.col-${c === 'gold' ? 'gold-c' : c}`).classList.add('active');
+  applyCardVisuals();
+}
+
+function selectPreset(id) {
+  currentPreset = id;
+  document.querySelectorAll('.preset-item').forEach(el => el.classList.remove('active'));
+  document.querySelector(`[data-id="${id}"]`).classList.add('active');
+  document.getElementById('specDesign').textContent = document.querySelector(`[data-id="${id}"] .preset-name`).textContent;
+  applyCardVisuals();
+}
+
+function applyCardVisuals() {
+  const cfg = colorConfigs[cardColor];
+  document.getElementById('cardBg').setAttribute('fill', cfg.bg);
+  document.getElementById('designGroup').innerHTML = designs[currentPreset] || '';
+  document.getElementById('chipRect').setAttribute('fill', cfg.chip);
+
+  // Name/role text colour
+  document.getElementById('nameDisplay').style.color = cfg.nameCol;
+  document.getElementById('roleDisplay').style.color = cfg.roleCol;
+  document.getElementById('specFinish').textContent = cfg.finishName;
+  document.getElementById('specMaterial').textContent = cfg.material;
+
+  // Chip colour
+  document.querySelectorAll('.card-chip-display div').forEach(d => {
+    d.style.background = cardColor === 'gold' ? 'rgba(201,168,76,0.3)' : 'rgba(0,0,0,0.4)';
+  });
+}
+
+function updateCardText() {
+  const name = document.getElementById('inputName').value || 'YOUR NAME';
+  const role = document.getElementById('inputRole').value || 'Title · Company';
+  document.getElementById('nameDisplay').textContent = name.toUpperCase();
+  document.getElementById('roleDisplay').textContent = role;
+}
+
+// Init
+applyCardVisuals();
+
+// ============================================================
+// TAB SWITCH
+// ============================================================
+function switchTab(tab) {
+  document.getElementById('tab-presets').style.display = tab === 'presets' ? 'flex' : 'none';
+  document.getElementById('tab-draw').style.display = tab === 'draw' ? 'flex' : 'none';
+  document.getElementById('btnPresets').classList.toggle('active', tab === 'presets');
+  document.getElementById('btnDraw').classList.toggle('active', tab === 'draw');
+  if (tab === 'draw') initCanvas();
+}
+
+// ============================================================
+// DRAWING CANVAS
+// ============================================================
+let canvas, ctx;
+let canvasInitialized = false;
+
+function initCanvas() {
+  if (canvasInitialized) return;
+  canvasInitialized = true;
+  canvas = document.getElementById('drawCanvas');
+  const frame = document.getElementById('drawCardFrame');
+  canvas.width = frame.offsetWidth;
+  canvas.height = frame.offsetHeight;
+  ctx = canvas.getContext('2d');
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  applyDrawBase('black');
+
+  // Mouse events
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mouseleave', endDraw);
+  // Touch
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); startDraw(e.touches[0]); }, {passive:false});
+  canvas.addEventListener('touchmove', e => { e.preventDefault(); draw(e.touches[0]); }, {passive:false});
+  canvas.addEventListener('touchend', endDraw, {passive:false});
+}
+
+function getPos(e) {
+  const r = canvas.getBoundingClientRect();
+  return { x: (e.clientX - r.left), y: (e.clientY - r.top) };
+}
+
+function startDraw(e) {
+  isDrawing = true;
+  const pos = getPos(e);
+  if (drawTool === 'pen' || drawTool === 'brush' || drawTool === 'eraser') {
+    currentStroke = { tool: drawTool, color: drawColor, size: drawTool === 'eraser' ? drawSize * 3 : drawSize, opacity: drawOpacity, points: [pos] };
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+  } else {
+    shapeStart = pos;
+    // snapshot for shape preview
+    currentStroke = { tool: drawTool, color: drawColor, size: drawSize, opacity: drawOpacity, start: pos, end: pos };
+  }
+}
+
+function draw(e) {
+  if (!isDrawing) return;
+  const pos = getPos(e);
+  if (drawTool === 'pen' || drawTool === 'brush') {
+    ctx.strokeStyle = drawColor;
+    ctx.globalAlpha = drawOpacity;
+    ctx.lineWidth = drawTool === 'brush' ? drawSize * 2 : drawSize;
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    currentStroke.points.push(pos);
+  } else if (drawTool === 'eraser') {
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.globalAlpha = 1;
+    ctx.lineWidth = drawSize * 4;
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+    ctx.globalCompositeOperation = 'source-over';
+    currentStroke.points.push(pos);
+  } else {
+    // Shape preview: redraw all committed strokes then preview
+    redrawAll();
+    ctx.globalAlpha = drawOpacity;
+    ctx.strokeStyle = drawColor;
+    ctx.lineWidth = drawSize;
+    ctx.beginPath();
+    if (drawTool === 'line') {
+      ctx.moveTo(shapeStart.x, shapeStart.y);
+      ctx.lineTo(pos.x, pos.y);
+    } else if (drawTool === 'rect') {
+      ctx.rect(shapeStart.x, shapeStart.y, pos.x - shapeStart.x, pos.y - shapeStart.y);
+    } else if (drawTool === 'circle') {
+      const r = Math.hypot(pos.x - shapeStart.x, pos.y - shapeStart.y);
+      ctx.arc(shapeStart.x, shapeStart.y, r, 0, Math.PI * 2);
+    }
+    ctx.stroke();
+    currentStroke.end = pos;
+  }
+}
+
+function endDraw() {
+  if (!isDrawing) return;
+  isDrawing = false;
+  if (currentStroke) {
+    if (drawTool !== 'pen' && drawTool !== 'brush' && drawTool !== 'eraser') {
+      // commit shape
+      const pos = currentStroke.end;
+      strokes.push({...currentStroke});
+    } else {
+      strokes.push({...currentStroke});
+    }
+    currentStroke = null;
+  }
+  ctx.beginPath();
+}
+
+function redrawAll() {
+  const bg = document.getElementById('drawCardBg').dataset.bg || 'black';
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.globalCompositeOperation = 'source-over';
+  strokes.forEach(s => {
+    ctx.globalAlpha = s.opacity;
+    ctx.strokeStyle = s.color;
+    ctx.lineWidth = s.size;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    if (s.tool === 'pen' || s.tool === 'brush') {
+      s.points.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+      ctx.stroke();
+    } else if (s.tool === 'eraser') {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.globalAlpha = 1;
+      ctx.lineWidth = s.size;
+      s.points.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+      ctx.stroke();
+      ctx.globalCompositeOperation = 'source-over';
+    } else if (s.tool === 'line') {
+      ctx.moveTo(s.start.x, s.start.y);
+      ctx.lineTo(s.end.x, s.end.y);
+      ctx.stroke();
+    } else if (s.tool === 'rect') {
+      ctx.rect(s.start.x, s.start.y, s.end.x - s.start.x, s.end.y - s.start.y);
+      ctx.stroke();
+    } else if (s.tool === 'circle') {
+      const r = Math.hypot(s.end.x - s.start.x, s.end.y - s.start.y);
+      ctx.arc(s.start.x, s.start.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+  });
+  ctx.globalAlpha = 1;
+}
+
+function undoStroke() {
+  strokes.pop();
+  redrawAll();
+}
+
+function clearCanvas() {
+  strokes = [];
+  if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function setTool(t) {
+  drawTool = t;
+  document.querySelectorAll('.tool-btn[id^="tool-"]').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById('tool-' + t);
+  if (el) el.classList.add('active');
+  if (canvas) canvas.style.cursor = t === 'eraser' ? 'cell' : 'crosshair';
+}
+
+function setColor(c, el) {
+  drawColor = c;
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function setSize(v) {
+  drawSize = +v;
+  document.getElementById('sizeVal').textContent = v + 'px';
+}
+
+function setOpacity(v) {
+  drawOpacity = v / 100;
+  document.getElementById('opacityVal').textContent = v + '%';
+}
+
+const drawBgColors = { black:'linear-gradient(135deg,#1a1a18,#0d0d0c)', silver:'linear-gradient(135deg,#5a5f66,#2a2f34)', gold:'linear-gradient(135deg,#2a1f08,#120e04)' };
+
+function setDrawBase(color, btn) {
+  const bg = drawBgColors[color];
+  const frame = document.getElementById('drawCardBg');
+  frame.style.background = bg;
+  frame.dataset.bg = color;
+  document.querySelectorAll('.draw-base-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function applyDrawBase(color) {
+  const frame = document.getElementById('drawCardBg');
+  frame.style.background = drawBgColors[color];
+  frame.dataset.bg = color;
+}
+
+function exportDrawing() {
+  if (!canvas) { alert('Switch to the Draw tab first and create a design!'); return; }
+  alert('Design captured! Our team will review your concept and reach out within 24 hours to confirm before production.');
+}
+
+// Resize canvas on window resize
+window.addEventListener('resize', () => {
+  if (!canvasInitialized) return;
+  const frame = document.getElementById('drawCardFrame');
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  canvas.width = frame.offsetWidth;
+  canvas.height = frame.offsetHeight;
+  ctx.putImageData(imageData, 0, 0);
+});
+</script>
+</body>
+</html>
