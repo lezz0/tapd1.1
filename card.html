@@ -24,9 +24,15 @@
   .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;
     color:var(--accent);text-transform:uppercase;margin:34px 0 10px}
   h1{font-size:26px;font-weight:600;margin:0 0 6px;line-height:1.2}
-  .sub{color:var(--dim);font-size:15px;margin:0 0 30px;line-height:1.5}
+  .sub{color:var(--dim);font-size:15px;margin:0 0 14px;line-height:1.5}
+  .perk{color:var(--accentHi);font-size:14px;margin:0 0 30px;line-height:1.5}
   label{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.18em;
     text-transform:uppercase;color:var(--dim);margin:0 0 8px}
+  .consent{display:flex;align-items:flex-start;gap:11px;margin:4px 0 2px;
+    font-family:inherit;font-size:13px;letter-spacing:normal;text-transform:none;
+    color:var(--dim);line-height:1.45;cursor:pointer}
+  input[type=checkbox]{width:19px;height:19px;flex:0 0 auto;margin:1px 0 0;padding:0;
+    background:none;border:0;border-radius:0;accent-color:var(--accent);cursor:pointer}
   .field{margin-bottom:18px}
   input{width:100%;background:var(--surface);border:1px solid var(--line);
     color:var(--text);font-size:16px;border-radius:14px;padding:15px 16px;outline:none}
@@ -61,6 +67,7 @@
       <div class="eyebrow">You tapped</div>
       <h1 id="cardName">a TAPD card</h1>
       <p class="sub">Share your details and <span id="ownerFirst">they</span> will have your contact instantly. Nothing is shared publicly.</p>
+      <p class="perk">Check your inbox for a unique discount code, just for you.</p>
 
       <div class="field">
         <label for="name">Name</label>
@@ -74,6 +81,11 @@
         <label for="email">Email</label>
         <input id="email" type="email" autocomplete="email" placeholder="you@example.com" />
       </div>
+
+      <label class="consent">
+        <input id="consent" type="checkbox" />
+        <span>Allow my data to be kept for promotional and marketing purposes.</span>
+      </label>
 
       <button id="submit" type="submit">Share my details</button>
       <div id="err" class="msg"></div>
@@ -132,6 +144,7 @@
         p_name: name,
         p_phone: $("phone").value.trim() || null,
         p_email: $("email").value.trim() || null,
+        p_consent: $("consent").checked,
       });
       if(error){
         $("err").textContent = "Something went wrong. Please try again.";
