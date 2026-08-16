@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Template 01 — Minimal Mono</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#FFFFFF; --ink:#101010; --dim:#6B6B6B; --line:#E4E4E4;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+    --sans:"Inter",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  .badge{position:fixed;top:10px;right:12px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#B9B9B9;z-index:5}
+  .wrap{max-width:420px;margin:0 auto;min-height:100vh;padding:calc(env(safe-area-inset-top) + 56px) 26px 50px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .avatar{width:88px;height:88px;border-radius:50%;border:1.5px solid var(--ink);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:22px;font-weight:500;margin-bottom:22px}
+  h1{font-size:26px;font-weight:600;margin:0 0 4px;letter-spacing:-.01em}
+  .role{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:0 0 20px}
+  .bio{font-size:14.5px;line-height:1.65;color:#3A3A3A;max-width:320px;margin:0 0 28px}
+  .rule{width:36px;height:1px;background:var(--ink);margin:0 0 26px}
+  .section-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#B0B0B0;margin:0 0 12px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 0 34px}
+  .tag{font-family:var(--mono);font-size:11.5px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;color:#333}
+  .contact{width:100%;display:flex;flex-direction:column;gap:0;margin:0 0 30px;border-top:1px solid var(--line)}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:14px 2px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+  .row .k{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .row .v{font-size:14px;font-weight:500}
+  .cta{width:100%;display:flex;flex-direction:column;gap:10px}
+  .btn{display:block;width:100%;text-align:center;padding:15px;border-radius:2px;font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
+  .btn.primary{background:var(--ink);color:#fff}
+  .btn.ghost{border:1px solid var(--ink);color:var(--ink)}
+  footer{margin-top:44px;font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:#C4C4C4;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="badge">TEMPLATE 01</div>
+<div class="wrap">
+  <div class="avatar">AM</div>
+  <h1>Alex Morgan</h1>
+  <p class="role">Creative Professional</p>
+  <p class="bio">A short bio goes here — a sentence or two about who you are and what you do.</p>
+  <div class="rule"></div>
+
+  <p class="section-label">Interests</p>
+  <div class="tags">
+    <span class="tag">Design</span><span class="tag">Travel</span><span class="tag">Photography</span><span class="tag">Coffee</span><span class="tag">Music</span>
+  </div>
+
+  <p class="section-label">Contact</p>
+  <div class="contact">
+    <a class="row" href="mailto:alex@example.com"><span class="k">Email</span><span class="v">alex@example.com</span></a>
+    <a class="row" href="tel:+15551234567"><span class="k">Phone</span><span class="v">+1 (555) 123-4567</span></a>
+    <a class="row" href="https://alexmorgan.com"><span class="k">Website</span><span class="v">alexmorgan.com</span></a>
+    <a class="row" href="https://instagram.com/alexmorgan"><span class="k">Instagram</span><span class="v">@alexmorgan</span></a>
+  </div>
+
+  <div class="cta">
+    <a class="btn primary" download="AlexMorgan.vcf" href="data:text/vcard;charset=utf-8,BEGIN:VCARD%0AVERSION:3.0%0AFN:Alex Morgan%0ATITLE:Creative Professional%0ATEL:+15551234567%0AEMAIL:alex@example.com%0AURL:https://alexmorgan.com%0AEND:VCARD">Save Contact</a>
+    <a class="btn ghost" href="mailto:alex@example.com">Get in Touch</a>
+  </div>
+
+  <footer>Powered by TAPD</footer>
+</div>
+</body>
+</html>

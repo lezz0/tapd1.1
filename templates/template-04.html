@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Template 04 — Corporate Clean</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --navy:#0E2A4A; --navy-2:#153C66; --ink:#1B1F24; --dim:#5C6672; --line:#E4E8EC; --bg:#F7F9FB;
+    --sans:"Inter",-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)}
+  .badge{position:fixed;top:10px;right:12px;font-size:10px;letter-spacing:.1em;color:#B7C0C9;z-index:5}
+  .header{background:linear-gradient(120deg,var(--navy),var(--navy-2));padding:calc(env(safe-area-inset-top) + 46px) 26px 60px;color:#fff;text-align:center}
+  .avatar{width:84px;height:84px;border-radius:12px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:600;margin:0 auto 18px}
+  .header h1{font-size:24px;font-weight:700;margin:0 0 4px}
+  .header .role{font-size:12.5px;letter-spacing:.06em;opacity:.85;margin:0}
+  .wrap{max-width:420px;margin:-32px auto 0;padding:0 20px 50px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:22px 20px;margin-bottom:14px;box-shadow:0 6px 20px rgba(14,42,74,.06)}
+  .card .label{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--navy-2);margin:0 0 12px}
+  .bio{font-size:14px;line-height:1.65;color:#3D444C;margin:0}
+  .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{font-size:12px;font-weight:500;padding:6px 12px;border-radius:6px;background:#EEF3F8;color:var(--navy-2)}
+  .contact-list{display:flex;flex-direction:column;gap:0}
+  .contact-list a{display:flex;justify-content:space-between;align-items:center;text-decoration:none;color:var(--ink);font-size:14px;padding:12px 0;border-bottom:1px solid var(--line)}
+  .contact-list a:last-child{border-bottom:none;padding-bottom:0}
+  .contact-list span.k{color:var(--dim);font-size:12px;font-weight:500}
+  .contact-list span.v{font-weight:600}
+  .cta{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+  .btn{display:block;width:100%;text-align:center;padding:15px;border-radius:8px;font-size:13.5px;font-weight:600;text-decoration:none}
+  .btn.primary{background:var(--navy);color:#fff}
+  .btn.ghost{border:1.5px solid var(--navy);color:var(--navy)}
+  footer{text-align:center;margin-top:30px;font-size:11px;color:#9AA4AE;letter-spacing:.06em}
+</style>
+</head>
+<body>
+<div class="badge">TEMPLATE 04</div>
+<div class="header">
+  <div class="avatar">AM</div>
+  <h1>Alex Morgan</h1>
+  <p class="role">Creative Professional</p>
+</div>
+<div class="wrap">
+  <div class="card">
+    <p class="label">About</p>
+    <p class="bio">A short bio goes here — a sentence or two about who you are and what you do.</p>
+  </div>
+
+  <div class="card">
+    <p class="label">Interests</p>
+    <div class="tags">
+      <span class="tag">Design</span><span class="tag">Travel</span><span class="tag">Photography</span><span class="tag">Coffee</span><span class="tag">Music</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="label">Contact</p>
+    <div class="contact-list">
+      <a href="mailto:alex@example.com"><span class="k">Email</span><span class="v">alex@example.com</span></a>
+      <a href="tel:+15551234567"><span class="k">Phone</span><span class="v">+1 (555) 123-4567</span></a>
+      <a href="https://alexmorgan.com"><span class="k">Website</span><span class="v">alexmorgan.com</span></a>
+      <a href="https://linkedin.com/in/alexmorgan"><span class="k">LinkedIn</span><span class="v">/in/alexmorgan</span></a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <a class="btn primary" download="AlexMorgan.vcf" href="data:text/vcard;charset=utf-8,BEGIN:VCARD%0AVERSION:3.0%0AFN:Alex Morgan%0ATITLE:Creative Professional%0ATEL:+15551234567%0AEMAIL:alex@example.com%0AURL:https://alexmorgan.com%0AEND:VCARD">Save Contact</a>
+    <a class="btn ghost" href="mailto:alex@example.com">Get in Touch</a>
+  </div>
+
+  <footer>Powered by TAPD</footer>
+</div>
+</body>
+</html>
