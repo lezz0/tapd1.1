@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Template 07 — Neon Cyber</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#07070A; --cyan:#33FFEC; --magenta:#FF3DCB; --ink:#E9F9F7; --dim:#7C8C8A; --line:rgba(51,255,236,.22);
+    --display:"Orbitron",sans-serif; --mono:"Space Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono)}
+  body{background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0px,rgba(255,255,255,.025) 1px,transparent 1px,transparent 3px)}
+  .badge{position:fixed;top:10px;right:12px;font-family:var(--mono);font-size:10px;color:rgba(51,255,236,.4);z-index:5}
+  .wrap{max-width:420px;margin:0 auto;min-height:100vh;padding:calc(env(safe-area-inset-top) + 50px) 24px 50px;display:flex;flex-direction:column;align-items:center;text-align:center}
+  .avatar{width:92px;height:92px;border-radius:50%;border:2px solid var(--cyan);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:22px;color:var(--cyan);margin-bottom:22px;box-shadow:0 0 24px rgba(51,255,236,.35),inset 0 0 14px rgba(51,255,236,.15)}
+  h1{font-family:var(--display);font-weight:700;font-size:24px;margin:0 0 8px;letter-spacing:.02em;color:var(--ink);text-shadow:0 0 12px rgba(51,255,236,.5)}
+  .role{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--magenta);margin:0 0 24px;text-shadow:0 0 10px rgba(255,61,203,.5)}
+  .bio{font-size:13.5px;line-height:1.7;color:var(--dim);max-width:300px;margin:0 0 30px}
+  .card{width:100%;background:rgba(51,255,236,.04);border:1px solid var(--line);border-radius:4px;padding:20px;margin-bottom:14px;text-align:left;position:relative}
+  .card::before{content:"";position:absolute;top:-1px;left:-1px;width:14px;height:14px;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan)}
+  .card::after{content:"";position:absolute;bottom:-1px;right:-1px;width:14px;height:14px;border-bottom:2px solid var(--magenta);border-right:2px solid var(--magenta)}
+  .label{font-family:var(--display);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan);margin:0 0 14px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{font-size:11px;padding:6px 12px;border:1px solid var(--magenta);color:var(--magenta);border-radius:2px}
+  .contact-list{display:flex;flex-direction:column;gap:13px}
+  .contact-list a{display:flex;justify-content:space-between;text-decoration:none;color:var(--ink);font-size:13px}
+  .contact-list span.k{color:var(--dim);text-transform:uppercase;font-size:10px;letter-spacing:.1em}
+  .cta{width:100%;display:flex;flex-direction:column;gap:10px;margin-top:6px}
+  .btn{display:block;width:100%;text-align:center;padding:15px;border-radius:2px;font-family:var(--display);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;text-decoration:none}
+  .btn.primary{background:var(--cyan);color:#031412;box-shadow:0 0 20px rgba(51,255,236,.4)}
+  .btn.ghost{border:1px solid var(--magenta);color:var(--magenta)}
+  footer{margin-top:36px;font-size:9.5px;letter-spacing:.16em;color:#3E4A48;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="badge">TEMPLATE 07</div>
+<div class="wrap">
+  <div class="avatar">AM</div>
+  <h1>ALEX MORGAN</h1>
+  <p class="role">Creative Professional</p>
+  <p class="bio">A short bio goes here — a sentence or two about who you are and what you do.</p>
+
+  <div class="card">
+    <p class="label">// Interests</p>
+    <div class="tags">
+      <span class="tag">Design</span><span class="tag">Travel</span><span class="tag">Photography</span><span class="tag">Coffee</span><span class="tag">Music</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <p class="label">// Contact</p>
+    <div class="contact-list">
+      <a href="mailto:alex@example.com"><span class="k">Email</span><span>alex@example.com</span></a>
+      <a href="tel:+15551234567"><span class="k">Phone</span><span>+1 (555) 123-4567</span></a>
+      <a href="https://alexmorgan.com"><span class="k">Website</span><span>alexmorgan.com</span></a>
+      <a href="https://instagram.com/alexmorgan"><span class="k">Instagram</span><span>@alexmorgan</span></a>
+    </div>
+  </div>
+
+  <div class="cta">
+    <a class="btn primary" download="AlexMorgan.vcf" href="data:text/vcard;charset=utf-8,BEGIN:VCARD%0AVERSION:3.0%0AFN:Alex Morgan%0ATITLE:Creative Professional%0ATEL:+15551234567%0AEMAIL:alex@example.com%0AURL:https://alexmorgan.com%0AEND:VCARD">Save Contact</a>
+    <a class="btn ghost" href="mailto:alex@example.com">Get in Touch</a>
+  </div>
+
+  <footer>Powered by TAPD</footer>
+</div>
+</body>
+</html>
