@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>TAPD — Profile</title>
+<!--
+  ============================================================================
+  TAPD — public profile template
+  ============================================================================
+  A cardholder shares this page when someone taps their NFC card. It's a
+  TEMPLATE: no per-person content is hardcoded. Everything customizable lives
+  in Supabase (see supabase/profiles.sql) and is loaded by username via the
+  ?u= query param — look for "CUSTOMIZABLE" comments below for the few spots
+  you might actually want to touch (demo fallback content, CTA behavior).
+
+  URL format for a real card:
+    https://lezz0.github.io/tapd1.1/profile.html?u=<username>
+
+  No ?u= param, or the network call fails/times out -> shows DEMO_PROFILE
+  below so you can preview the layout without a DB row. Unknown username ->
+  a friendly "not found" state, never a raw error.
+  ============================================================================
+-->
+<style>
+  :root{
+    --bg:#0A0A0B; --surface:#131316; --elevated:#1B1B1F;
+    --text:#F4F3EF; --dim:#8B8B92; --faint:#5A5A60;
+    --line:rgba(255,255,255,.08); --lineStrong:rgba(255,255,255,.16);
+    --accent:#CBA45C; --accentHi:#E7C983; --danger:#E5574B; --success:#5BC08C;
+    --mono:ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:460px;margin:0 auto;min-height:100vh;
+    padding:calc(env(safe-area-inset-top) + 40px) 22px 40px;
+    display:flex;flex-direction:column}
+  .brand{font-family:var(--mono);font-size:12px;letter-spacing:.35em;
+    color:var(--faint);text-transform:uppercase}
+  .banner{margin-top:18px;padding:10px 14px;border:1px solid var(--line);
+    border-radius:12px;font-size:12px;line-height:1.5;color:var(--dim);
+    background:var(--surface);display:none}
+  .banner.show{display:block}
+
+  .center{display:flex;flex:1;align-items:center;justify-content:center;
+    color:var(--dim);text-align:center;padding:0 10px}
+
+  /* ---- profile card ---- */
+  .profile{display:none}
+  .profile.show{display:block}
+
+  .avatarRow{display:flex;justify-content:center;margin-top:30px}
+  .avatar{width:96px;height:96px;border-radius:50%;object-fit:cover;
+    border:1px solid var(--lineStrong);background:var(--elevated)}
+  .avatarFallback{width:96px;height:96px;border-radius:50%;
+    border:1px solid var(--lineStrong);background:var(--elevated);
+    display:flex;align-items:center;justify-content:center;
+    font-size:32px;font-weight:600;color:var(--accentHi)}
+
+  h1{font-size:24px;font-weight:600;margin:20px 0 4px;line-height:1.2;text-align:center}
+  .headline{color:var(--accentHi);font-size:14px;margin:0 0 22px;
+    line-height:1.5;text-align:center}
+  .bio{color:var(--dim);font-size:14.5px;line-height:1.6;margin:0 0 30px;
+    text-align:center;white-space:pre-line}
+
+  .actions{display:flex;gap:10px;margin-bottom:30px}
+  button, .btn{flex:1;background:var(--text);color:#111;border:none;
+    border-radius:14px;padding:15px 12px;font-size:14.5px;font-weight:600;
+    cursor:pointer;text-align:center;text-decoration:none;display:block}
+  .btn.secondary{background:var(--surface);color:var(--text);
+    border:1px solid var(--line)}
+  button:disabled{opacity:.5;cursor:default}
+
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;
+    color:var(--faint);text-transform:uppercase;margin:0 0 12px}
+  .links{list-style:none;margin:0 0 10px;padding:0;display:flex;
+    flex-direction:column;gap:10px}
+  .links a{display:flex;align-items:center;justify-content:space-between;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:15px 16px;color:var(--text);text-decoration:none;font-size:14.5px}
+  .links a:active{border-color:var(--lineStrong)}
+  .links .arrow{color:var(--faint);font-family:var(--mono)}
+
+  .foot{margin-top:auto;padding-top:36px;color:var(--faint);
+    font-family:var(--mono);font-size:11px;letter-spacing:.25em;
+    text-transform:uppercase;text-align:center}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">TAPD</div>
+
+    <!-- Shown only in preview/demo/error states, never for a real found profile -->
+    <div id="banner" class="banner"></div>
+
+    <!-- loading / not-found / generic message state -->
+    <div id="loading" class="center">Loading…</div>
+
+    <!-- profile -->
+    <div id="profile" class="profile">
+      <div class="avatarRow">
+        <img id="avatarImg" class="avatar" style="display:none" alt="" />
+        <div id="avatarFallback" class="avatarFallback"></div>
+      </div>
+
+      <h1 id="fullName">—</h1>
+      <p class="headline" id="headline"></p>
+      <p class="bio" id="bio"></p>
+
+      <div class="actions">
+        <button id="saveContact" type="button">Save contact</button>
+        <a id="connect" class="btn secondary" href="#">Connect</a>
+      </div>
+
+      <div id="linksBlock">
+        <div class="eyebrow">Links</div>
+        <ul class="links" id="links"></ul>
+      </div>
+    </div>
+
+    <div class="foot">Powered by TAPD</div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // --- Supabase (public anon key — safe to ship; RLS + get_public_profile
+    // RPC keep the underlying table locked down, same pattern as card.html) ---
+    const SUPABASE_URL  = "https://idoxkgzcamqvknnbnbbp.supabase.co";
+    const SUPABASE_ANON  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlkb3hrZ3pjYW1xdmtubmJuYmJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NDY0ODUsImV4cCI6MjEwMjEyMjQ4NX0.AD-viN1J9hM9sG0a4Mq8DNcO5YqhMhFhIrOmcHFcEU0";
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    // CUSTOMIZABLE: shown when there's no ?u= at all, or the fetch fails/times
+    // out — lets you preview the layout by just opening the file locally.
+    const DEMO_PROFILE = {
+      full_name: "Alex Tan",
+      headline: "Product Designer @ TAPD",
+      bio: "I design for how people actually connect — not just how they collect contacts. Outside work: film photography, hawker food tours, and a very slow attempt at learning guitar.",
+      avatar_url: "",
+      links: [
+        { label: "LinkedIn", url: "https://linkedin.com/in/example" },
+        { label: "Instagram", url: "https://instagram.com/example" },
+        { label: "Website", url: "https://example.com" },
+        { label: "Email", url: "mailto:alex@example.com" },
+      ],
+    };
+
+    // CUSTOMIZABLE: static per-username fallback content, keyed by username.
+    // The Supabase RPC is always tried first — this only kicks in if that
+    // fetch errors, times out, or returns no row (e.g. the SQL seed hasn't
+    // been run yet). Lets a specific person's page work immediately once this
+    // file is deployed, with zero dependency on the DB being set up.
+    const STATIC_PROFILES = {
+      shay: {
+        full_name: "Shay",
+        headline: "Police Officer",
+        bio: "Police officer with a passion for interior design.",
+        avatar_url: "https://lezz0.github.io/tapd1.1/shay.jpg",
+        links: [
+          { label: "Instagram", url: "https://www.instagram.com/akshaynethan" },
+          { label: "LinkedIn", url: "https://sg.linkedin.com/in/akshay-nethan-ambalam-35b503234" },
+          { label: "Call", url: "tel:+6590640496" },
+        ],
+      },
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const params = new URLSearchParams(location.search);
+    const username = (params.get("u") || "").trim();
+
+    function showBanner(text){
+      $("banner").textContent = text;
+      $("banner").classList.add("show");
+    }
+
+    function initials(name){
+      const parts = (name || "").trim().split(/\s+/).filter(Boolean);
+      if(!parts.length) return "?";
+      return (parts[0][0] + (parts.length > 1 ? parts[parts.length - 1][0] : "")).toUpperCase();
+    }
+
+    // Best-effort icon-free "type" for the Connect button + vCard fields —
+    // matched by label, not a fixed enum, so any label still degrades fine.
+    function findLink(links, pattern){
+      return (links || []).find((l) => pattern.test(l.label || ""));
+    }
+
+    function renderProfile(p, opts){
+      opts = opts || {};
+      const name = p.full_name || "TAPD member";
+      $("fullName").textContent = name;
+
+      $("headline").textContent = p.headline || "";
+      $("headline").style.display = p.headline ? "block" : "none";
+
+      $("bio").textContent = p.bio || "";
+      $("bio").style.display = p.bio ? "block" : "none";
+
+      if(p.avatar_url){
+        $("avatarImg").src = p.avatar_url;
+        $("avatarImg").style.display = "block";
+        $("avatarFallback").style.display = "none";
+      } else {
+        $("avatarImg").style.display = "none";
+        $("avatarFallback").style.display = "flex";
+        $("avatarFallback").textContent = initials(p.full_name);
+      }
+
+      const links = Array.isArray(p.links) ? p.links.filter((l) => l && l.url) : [];
+      const list = $("links");
+      list.innerHTML = "";
+      links.forEach((l) => {
+        const a = document.createElement("a");
+        a.href = l.url;
+        a.target = "_blank";
+        a.rel = "noopener";
+        const label = document.createElement("span");
+        label.textContent = l.label || l.url;
+        const arrow = document.createElement("span");
+        arrow.className = "arrow";
+        arrow.textContent = "↗";
+        a.appendChild(label);
+        a.appendChild(arrow);
+        list.appendChild(a);
+      });
+      $("linksBlock").style.display = links.length ? "block" : "none";
+
+      // Connect: prefer email, then phone, then the first link — always
+      // something reasonable to tap even if the profile only has one field set.
+      const emailLink = findLink(links, /mail/i) || (p.email ? { url: "mailto:" + p.email } : null);
+      const phoneLink = findLink(links, /phone|tel|whatsapp|call/i);
+      const connectHref = (emailLink && emailLink.url)
+        || (phoneLink && phoneLink.url)
+        || (links[0] && links[0].url)
+        || null;
+      if(connectHref){
+        $("connect").href = connectHref;
+        $("connect").target = connectHref.startsWith("mailto:") || connectHref.startsWith("tel:") ? "_self" : "_blank";
+        $("connect").style.display = "block";
+      } else {
+        $("connect").style.display = "none";
+      }
+
+      // Save contact -> generates a .vcf client-side, no backend needed.
+      $("saveContact").onclick = () => downloadVCard(name, p, links, emailLink, phoneLink);
+
+      $("loading").style.display = "none";
+      $("profile").classList.add("show");
+
+      if(opts.banner) showBanner(opts.banner);
+    }
+
+    function downloadVCard(name, p, links, emailLink, phoneLink){
+      const lines = [
+        "BEGIN:VCARD",
+        "VERSION:3.0",
+        "FN:" + name,
+      ];
+      if(p.headline) lines.push("TITLE:" + p.headline);
+      if(emailLink && emailLink.url) lines.push("EMAIL:" + emailLink.url.replace(/^mailto:/, ""));
+      if(phoneLink && phoneLink.url) lines.push("TEL:" + phoneLink.url.replace(/^tel:/, ""));
+      links.forEach((l) => {
+        if(l === emailLink || l === phoneLink) return;
+        lines.push("URL;TYPE=" + (l.label || "Link").replace(/[^A-Za-z0-9]/g, "") + ":" + l.url);
+      });
+      if(p.bio) lines.push("NOTE:" + p.bio.replace(/\r?\n/g, "\\n"));
+      lines.push("END:VCARD");
+
+      const blob = new Blob([lines.join("\r\n")], { type: "text/vcard" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = (username || name || "contact").replace(/\s+/g, "_") + ".vcf";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    function notFound(){
+      $("loading").style.display = "flex";
+      $("loading").textContent = "We couldn't find that profile. Double-check the link, or ask them to re-share their card.";
+    }
+
+    // Network calls on a conference wifi can hang — never block the page on
+    // one. If it doesn't resolve quickly, fall through to the demo content.
+    function withTimeout(promise, ms){
+      return Promise.race([
+        promise,
+        new Promise((resolve) => setTimeout(() => resolve({ timedOut: true }), ms)),
+      ]);
+    }
+
+    // DB fetch failed/timed out/found nothing -> try the static fallback for
+    // this username before giving up. Keeps a specific page working even
+    // before the SQL seed has been run against Supabase.
+    function fallbackOrNotFound(){
+      const stat = STATIC_PROFILES[username.toLowerCase()];
+      if(stat){
+        renderProfile(stat);
+        return;
+      }
+      notFound();
+    }
+
+    async function init(){
+      if(!username){
+        renderProfile(DEMO_PROFILE, { banner: "Preview mode — showing demo content. Add ?u=username to load a real profile." });
+        return;
+      }
+
+      const result = await withTimeout(
+        sb.rpc("get_public_profile", { p_username: username }),
+        6000
+      );
+
+      if(result.timedOut){
+        fallbackOrNotFound();
+        return;
+      }
+
+      const { data, error } = result;
+      if(error){
+        fallbackOrNotFound();
+        return;
+      }
+      if(!data || !data.length){
+        fallbackOrNotFound();
+        return;
+      }
+      renderProfile(data[0]);
+    }
+
+    init();
+  </script>
+</body>
+</html>
