@@ -71,6 +71,9 @@
   .done.in .tick{transform:scale(1);opacity:1}
   .center{display:flex;flex:1;align-items:center;justify-content:center;color:var(--dim);
     text-align:center;padding:0 10px}
+  .profileLink{display:none;align-items:center;gap:6px;font-size:13px;
+    color:var(--accentHi);text-decoration:none;margin:-4px 0 22px}
+  .profileLink.show{display:inline-flex}
 </style>
 </head>
 <body>
@@ -84,6 +87,7 @@
     <form id="form" style="display:none">
       <div class="eyebrow">Connect with</div>
       <h1 id="profileName">a TAPD member</h1>
+      <a id="profileLink" class="profileLink" href="#" target="_self">View <span id="profileLinkName">their</span> profile ↗</a>
       <p class="sub">Share your details and <span id="ownerFirst">they</span> will have your contact instantly. Nothing is shared publicly.</p>
 
       <div class="field">
@@ -148,6 +152,13 @@
       const first = (profile.full_name || "").trim().split(/\s+/)[0] || "they";
       $("profileName").textContent = profile.full_name || "a TAPD member";
       $("ownerFirst").textContent = first;
+
+      // Send the visitor back to the profile page they came from, same
+      // "jump straight to each other" pattern as card.html's profileLink.
+      $("profileLinkName").textContent = first;
+      $("profileLink").href = "profile.html?u=" + encodeURIComponent(username);
+      $("profileLink").classList.add("show");
+
       $("loading").style.display = "none";
       $("form").style.display = "block";
     }
