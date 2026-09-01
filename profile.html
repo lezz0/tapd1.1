@@ -20,6 +20,11 @@
   No ?u= param, or the network call fails/times out -> shows DEMO_PROFILE
   below so you can preview the layout without a DB row. Unknown username ->
   a friendly "not found" state, never a raw error.
+
+  "Connect" sends the visitor to connect.html?u=<username> — a lead-capture
+  form (see supabase/profile_connect.sql). Whatever they submit there lands
+  in this profile's owner's Contacts in the TAPD app, same as a card tap.
+  "Save contact" stays a client-side .vcf download, no backend involved.
   ============================================================================
 -->
 <style>
@@ -163,6 +168,17 @@
           { label: "Call", url: "tel:+6590640496" },
         ],
       },
+      lorenz: {
+        full_name: "Lorenz Nunis",
+        headline: "Builder with an interest in business and tech",
+        bio: "",
+        avatar_url: "",
+        links: [
+          { label: "LinkedIn", url: "https://www.linkedin.com/in/lorenz-nunis-449094259/" },
+          { label: "TAPD", url: "https://lezz0.github.io/tapd1.1/" },
+          { label: "Call", url: "tel:+6584443935" },
+        ],
+      },
     };
 
     const $ = (id) => document.getElementById(id);
@@ -226,21 +242,16 @@
       });
       $("linksBlock").style.display = links.length ? "block" : "none";
 
-      // Connect: prefer email, then phone, then the first link — always
-      // something reasonable to tap even if the profile only has one field set.
+      // Used by the vCard export below (email/phone pulled out of the links list).
       const emailLink = findLink(links, /mail/i) || (p.email ? { url: "mailto:" + p.email } : null);
       const phoneLink = findLink(links, /phone|tel|whatsapp|call/i);
-      const connectHref = (emailLink && emailLink.url)
-        || (phoneLink && phoneLink.url)
-        || (links[0] && links[0].url)
-        || null;
-      if(connectHref){
-        $("connect").href = connectHref;
-        $("connect").target = connectHref.startsWith("mailto:") || connectHref.startsWith("tel:") ? "_self" : "_blank";
-        $("connect").style.display = "block";
-      } else {
-        $("connect").style.display = "none";
-      }
+
+      // Connect -> the lead-capture form (capture/connect.html), so whoever's
+      // viewing this page can leave their own details for the profile owner —
+      // those land in the owner's Contacts in the TAPD app, same as a card tap.
+      // Falls back to the seeded "demo" profile when there's no real ?u=.
+      $("connect").href = "connect.html?u=" + encodeURIComponent(username || "demo");
+      $("connect").target = "_self";
 
       // Save contact -> generates a .vcf client-side, no backend needed.
       $("saveContact").onclick = () => downloadVCard(name, p, links, emailLink, phoneLink);
