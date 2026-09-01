@@ -184,6 +184,9 @@
     const $ = (id) => document.getElementById(id);
     const params = new URLSearchParams(location.search);
     const username = (params.get("u") || "").trim();
+    // Optional: links this profile back to its TAPD card's lead-capture page
+    // (capture/card.html), so the two pages can jump straight to each other.
+    const cardId = (params.get("c") || "").trim();
 
     function showBanner(text){
       $("banner").textContent = text;
@@ -246,11 +249,15 @@
       const emailLink = findLink(links, /mail/i) || (p.email ? { url: "mailto:" + p.email } : null);
       const phoneLink = findLink(links, /phone|tel|whatsapp|call/i);
 
-      // Connect -> the lead-capture form (capture/connect.html), so whoever's
-      // viewing this page can leave their own details for the profile owner —
-      // those land in the owner's Contacts in the TAPD app, same as a card tap.
-      // Falls back to the seeded "demo" profile when there's no real ?u=.
-      $("connect").href = "connect.html?u=" + encodeURIComponent(username || "demo");
+      // Connect -> a lead-capture form, so whoever's viewing this page can
+      // leave their own details for the profile owner. If this profile was
+      // reached via a TAPD card (?c=<cardId> present), send them to that
+      // card's own capture page (capture/card.html) so both pages point at
+      // each other. Otherwise fall back to the username-based form
+      // (capture/connect.html) — e.g. a profile shared without a card.
+      $("connect").href = cardId
+        ? "card.html?c=" + encodeURIComponent(cardId)
+        : "connect.html?u=" + encodeURIComponent(username || "demo");
       $("connect").target = "_self";
 
       // Save contact -> generates a .vcf client-side, no backend needed.

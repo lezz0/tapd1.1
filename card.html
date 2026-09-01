@@ -31,6 +31,8 @@
   .consent{display:flex;align-items:flex-start;gap:11px;margin:4px 0 2px;
     font-family:inherit;font-size:13px;letter-spacing:normal;text-transform:none;
     color:var(--dim);line-height:1.45;cursor:pointer}
+  .consent + .consent{margin-top:14px}
+  .consent a{color:var(--accentHi);text-decoration:underline}
   input[type=checkbox]{width:19px;height:19px;flex:0 0 auto;margin:1px 0 0;padding:0;
     background:none;border:0;border-radius:0;accent-color:var(--accent);cursor:pointer}
   .field{margin-bottom:18px}
@@ -53,6 +55,9 @@
     border:1px solid var(--success);display:flex;align-items:center;justify-content:center;
     color:var(--success);font-size:30px}
   .center{display:flex;flex:1;align-items:center;justify-content:center;color:var(--dim)}
+  .profileLink{display:none;align-items:center;gap:6px;font-size:13px;
+    color:var(--accentHi);text-decoration:none;margin:-4px 0 22px}
+  .profileLink.show{display:inline-flex}
 </style>
 </head>
 <body>
@@ -66,6 +71,7 @@
     <form id="form" style="display:none">
       <div class="eyebrow">You tapped</div>
       <h1 id="cardName">a TAPD card</h1>
+      <a id="profileLink" class="profileLink" href="#" target="_self">View <span id="profileLinkName">their</span> profile ↗</a>
       <p class="sub">Share your details and <span id="ownerFirst">they</span> will have your contact instantly. Nothing is shared publicly.</p>
       <p class="perk">Check your inbox for a unique discount code, just for you.</p>
 
@@ -81,6 +87,11 @@
         <label for="email">Email</label>
         <input id="email" type="email" autocomplete="email" placeholder="you@example.com" />
       </div>
+
+      <label class="consent">
+        <input id="terms" type="checkbox" required />
+        <span>I agree to TAPD's <a href="terms.html" target="_blank" rel="noopener">Terms &amp; Privacy Policy</a> (PDPA).</span>
+      </label>
 
       <label class="consent">
         <input id="consent" type="checkbox" />
@@ -128,6 +139,15 @@
       const first = (card.name || "").trim().split(/\s+/)[0] || "they";
       $("cardName").textContent = card.name || "a TAPD card";
       $("ownerFirst").textContent = first;
+
+      // If this card has a personal profile page set (cards.url), link to it
+      // so this page and the profile page can jump straight to each other.
+      if(card.url){
+        $("profileLinkName").textContent = first;
+        $("profileLink").href = card.url;
+        $("profileLink").classList.add("show");
+      }
+
       $("loading").style.display = "none";
       $("form").style.display = "block";
     }
@@ -145,6 +165,7 @@
         p_phone: $("phone").value.trim() || null,
         p_email: $("email").value.trim() || null,
         p_consent: $("consent").checked,
+        p_terms_accepted: $("terms").checked,
       });
       if(error){
         $("err").textContent = "Something went wrong. Please try again.";
