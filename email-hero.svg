@@ -1,0 +1,10 @@
+<svg width="560" height="260" viewBox="0 0 560 260" xmlns="http://www.w3.org/2000/svg">
+  <rect width="560" height="260" rx="16" fill="#0A0A0B"/>
+  <g transform="translate(210,58)">
+    <rect x="0" y="0" width="140" height="140" rx="22" fill="#16161A" stroke="#2A2A2E" stroke-width="2"/>
+    <rect x="18" y="18" width="104" height="104" rx="14" fill="#0A0A0B"/>
+    <path d="M146 42 Q172 70 146 98" stroke="#CBA45C" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M162 24 Q198 70 162 116" stroke="#CBA45C" stroke-width="6" fill="none" stroke-linecap="round" opacity="0.5"/>
+  </g>
+  <text x="280" y="228" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#8B8B92" letter-spacing="4">TAP. CONNECT. SHARE.</text>
+</svg>
