@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Template 08 — Editorial Serif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --paper:#FBFAF7; --ink:#141414; --red:#C4291C; --dim:#767676; --line:#E6E3DC;
+    --display:"Playfair Display",serif; --sans:"Inter",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans)}
+  .badge{position:fixed;top:10px;right:12px;font-size:10px;letter-spacing:.1em;color:#CBC7BC;z-index:5}
+  .wrap{max-width:440px;margin:0 auto;min-height:100vh;padding:calc(env(safe-area-inset-top) + 44px) 26px 50px}
+  .kicker{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--red);margin:0 0 10px}
+  h1{font-family:var(--display);font-weight:900;font-size:44px;line-height:1.02;margin:0 0 10px}
+  .role{font-family:var(--display);font-style:italic;font-weight:500;font-size:18px;color:var(--dim);margin:0 0 22px}
+  .rule{height:3px;background:var(--ink);width:100%;margin:0 0 22px}
+  .byline{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+  .avatar{width:56px;height:56px;border-radius:50%;background:var(--ink);color:var(--paper);display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:16px;flex:0 0 auto}
+  .bio{font-size:15.5px;line-height:1.75;color:#333}
+  section{margin-top:30px}
+  .label{font-family:var(--display);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--red);margin:0 0 14px;border-bottom:1px solid var(--line);padding-bottom:8px}
+  .tags{display:flex;flex-wrap:wrap;gap:0}
+  .tag{font-size:14px;padding:0 14px 0 0;margin:0 14px 8px 0;border-right:1px solid var(--line)}
+  .tag:last-child{border-right:none}
+  .contact-list{display:flex;flex-direction:column;gap:0}
+  .contact-list a{display:flex;justify-content:space-between;text-decoration:none;color:var(--ink);font-size:15px;padding:13px 0;border-bottom:1px solid var(--line)}
+  .contact-list a:last-child{border-bottom:none}
+  .contact-list span.k{font-family:var(--display);font-style:italic;color:var(--dim)}
+  .cta{display:flex;flex-direction:column;gap:10px;margin-top:32px}
+  .btn{display:block;width:100%;text-align:center;padding:16px;font-size:12.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;text-decoration:none}
+  .btn.primary{background:var(--ink);color:var(--paper)}
+  .btn.ghost{border:1.5px solid var(--ink);color:var(--ink)}
+  footer{text-align:center;margin-top:40px;font-size:10.5px;letter-spacing:.14em;color:#B8B4A8;text-transform:uppercase}
+</style>
+</head>
+<body>
+<div class="badge">TEMPLATE 08</div>
+<div class="wrap">
+  <p class="kicker">Featured Connection</p>
+  <h1>Alex Morgan</h1>
+  <p class="role">Creative Professional</p>
+  <div class="rule"></div>
+  <div class="byline">
+    <div class="avatar">AM</div>
+    <p class="bio">A short bio goes here — a sentence or two about who you are and what you do.</p>
+  </div>
+
+  <section>
+    <p class="label">Interests</p>
+    <div class="tags">
+      <span class="tag">Design</span><span class="tag">Travel</span><span class="tag">Photography</span><span class="tag">Coffee</span><span class="tag">Music</span>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">Contact</p>
+    <div class="contact-list">
+      <a href="mailto:alex@example.com"><span class="k">Email</span><span>alex@example.com</span></a>
+      <a href="tel:+15551234567"><span class="k">Phone</span><span>+1 (555) 123-4567</span></a>
+      <a href="https://alexmorgan.com"><span class="k">Website</span><span>alexmorgan.com</span></a>
+      <a href="https://instagram.com/alexmorgan"><span class="k">Instagram</span><span>@alexmorgan</span></a>
+    </div>
+  </section>
+
+  <div class="cta">
+    <a class="btn primary" download="AlexMorgan.vcf" href="data:text/vcard;charset=utf-8,BEGIN:VCARD%0AVERSION:3.0%0AFN:Alex Morgan%0ATITLE:Creative Professional%0ATEL:+15551234567%0AEMAIL:alex@example.com%0AURL:https://alexmorgan.com%0AEND:VCARD">Save Contact</a>
+    <a class="btn ghost" href="mailto:alex@example.com">Get in Touch</a>
+  </div>
+
+  <footer>Powered by TAPD</footer>
+</div>
+</body>
+</html>
