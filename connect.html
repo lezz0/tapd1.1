@@ -190,11 +190,18 @@
       $("form").style.display = "none";
       $("done").classList.add("show");
       const who = $("profileName").textContent;
-      $("doneSub").textContent = who ? ("Your details were sent to " + who + ".") : "Your details were sent.";
+      $("doneSub").textContent = who ? ("Your details were sent to " + who + ". Taking you back to their profile…") : "Your details were sent.";
       // Double rAF: let the browser paint display:block first, then trigger
       // the opacity/transform transition on the next frame — a single rAF
       // can still land before that first paint in some browsers.
       requestAnimationFrame(() => requestAnimationFrame(() => $("done").classList.add("in")));
+
+      // Give them a moment to see the confirmation, then send them back to
+      // the profile page they came from — same page the "Connect" button on
+      // profile.html originally sent them out from.
+      setTimeout(() => {
+        window.location.href = "profile.html?u=" + encodeURIComponent(username);
+      }, 1800);
     });
 
     init();
