@@ -122,6 +122,10 @@
     const $ = (id) => document.getElementById(id);
     const params = new URLSearchParams(location.search);
     const cardId = params.get("c");
+    // Set in init() when this card has a linked profile page (cards.url) --
+    // used to send the visitor back there after a successful submit, same
+    // "jump straight to each other" pattern as the profileLink above.
+    let profileUrl = null;
 
     function fatal(text){
       $("loading").style.display="none";
@@ -143,6 +147,7 @@
       // If this card has a personal profile page set (cards.url), link to it
       // so this page and the profile page can jump straight to each other.
       if(card.url){
+        profileUrl = card.url;
         $("profileLinkName").textContent = first;
         $("profileLink").href = card.url;
         $("profileLink").classList.add("show");
@@ -177,7 +182,14 @@
       $("form").style.display = "none";
       $("done").classList.add("show");
       const who = $("cardName").textContent;
-      $("doneSub").textContent = who ? ("Your details were sent to " + who + ".") : "Your details were sent.";
+      $("doneSub").textContent = (who ? ("Your details were sent to " + who + ".") : "Your details were sent.")
+        + (profileUrl ? " Taking you back to their profile…" : "");
+
+      // If this card has a linked profile page, send the visitor back to it
+      // after a moment -- same behavior as connect.html's post-submit redirect.
+      if(profileUrl){
+        setTimeout(() => { window.location.href = profileUrl; }, 1800);
+      }
     });
 
     init();
